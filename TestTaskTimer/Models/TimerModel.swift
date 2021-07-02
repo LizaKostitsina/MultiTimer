@@ -6,3 +6,19 @@
 //
 
 import Foundation
+
+class TimerModel {
+    
+    public var name: String
+    public var time: Int
+   
+    
+    init(name: String, time:Int) {
+        
+        self.name = name
+        self.time = time
+        
+    }
+    
+    
+}
