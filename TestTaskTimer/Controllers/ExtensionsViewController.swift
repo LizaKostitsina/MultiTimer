@@ -33,11 +33,20 @@ extension ViewController : UITableViewDelegate, UITableViewDataSource {
             return label
         }()
         
+        let button : UIButton = {
+            
+            let button = UIButton()
+            button.backgroundColor = .black
+            button.frame = CGRect(origin: CGPoint(x: 300, y: 10), size: CGSize(width: 60, height: 30))
+            button.setTitle("STOP", for: .normal)
+            return button
+            
+        }()
        
         
         if indexPath.section == 0 {
             cell.selectionStyle = .none
-            cell.addSubview(button)
+            cell.addSubview(self.button)
             cell.addSubview(timerNameTextfield)
             cell.addSubview(timeTextfield)
             
@@ -46,15 +55,15 @@ extension ViewController : UITableViewDelegate, UITableViewDataSource {
             
             let timer = timersModel[indexPath.row]
             
-            
-            
             timerNameLabel.text = timer.name
             timeLabel.text = timer.time.inMinutes
-            
+            button.tag = indexPath.row
+            button.addTarget(self, action: #selector(cellButtonTapped(_:)), for: .touchUpInside)
+            timersModel[button.tag].isPaused ? button.setTitle("START", for: .normal) : button.setTitle("STOP", for: .normal)
             cell.addSubview(timerNameLabel)
             cell.addSubview(timeLabel)
             
-            
+            cell.addSubview(button)
             
         }
         
@@ -110,6 +119,25 @@ extension ViewController : UITableViewDelegate, UITableViewDataSource {
         headerView.addSubview(label)
         
         return headerView
+    }
+    
+    @objc func cellButtonTapped(_ sender : UIButton) {
+        
+        if timersModel[sender.tag].isPaused {
+            
+            startTimer(timerModel: timersModel[sender.tag]) 
+            timersModel[sender.tag].isPaused = false
+            
+        } else {
+            timersModel[sender.tag].timer?.invalidate()
+            timersModel[sender.tag].isPaused = true
+            
+        }
+        timersModel.sort { $0.time > $1.time }
+        
+        print("button tag is \(sender.tag)")
+        self.tableView.reloadData()
+        
     }
 }
 

@@ -10,7 +10,8 @@ import UIKit
 class ViewController: UIViewController {
 
     public var timersModel: [TimerModel] = []
-    private var tableView = UITableView()
+    
+    public var tableView = UITableView()
     lazy var button = SetupButton.setupButton(vc: self)
     lazy var timerNameTextfield = SetupTextFields.setupTextField(placeHolder: "Название таймера", y: 10,keyboard: .default)
     lazy var timeTextfield = SetupTextFields.setupTextField(placeHolder: "Время в секундах", y: 50,keyboard: .numberPad)
@@ -40,20 +41,9 @@ class ViewController: UIViewController {
         
     }
     
-    @objc func tappedButton(_ sender: UIButton) {
-
-        guard let name = self.timerNameTextfield.text, let time = self.timeTextfield.text , !name.isEmpty,
-              !time.isEmpty else  { return }
+    func startTimer(timerModel: TimerModel) {
         
-        guard let intTime = Int(time) else { return }
-        let timerModel = TimerModel(name: name, time: intTime)
-        
-        timersModel.append(timerModel)
-        timersModel.sort { $0.time > $1.time }
-        
-        
-        Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] (Timer) in
-            
+        let timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] (Timer) in
             
             if timerModel.time > 0 {
                 
@@ -62,14 +52,35 @@ class ViewController: UIViewController {
             } else {
                 
                 Timer.invalidate()
-                self?.timersModel.removeLast()
+                
+                if let timersModel = self?.timersModel, !timersModel.isEmpty {
+                    self?.timersModel.removeLast()
+                }
                 self?.tableView.reloadSections([1], with: .automatic)
                 
+                timerModel.timer = nil
             }
             
         }
         
+        timerModel.timer = timer
+      
+    }
+    
+    @objc func tappedButton(_ sender: UIButton) {
         
+
+        guard let name = self.timerNameTextfield.text, let time = self.timeTextfield.text , !name.isEmpty,
+              !time.isEmpty else  { return }
+        
+        guard let intTime = Int(time) else { return }
+        let timerModel = TimerModel(name: name, time: intTime,isPaused: false)
+        
+        timersModel.append(timerModel)
+        timersModel.sort { $0.time > $1.time }
+        
+        startTimer(timerModel: timerModel)
+
         self.timeTextfield.text = ""
         self.timerNameTextfield.text = ""
         
@@ -82,7 +93,6 @@ class ViewController: UIViewController {
         
         super.touchesBegan(touches, with: event)
     }
-    
     
 }
 

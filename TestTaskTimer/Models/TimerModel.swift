@@ -11,14 +11,15 @@ class TimerModel {
     
     public var name: String
     public var time: Int
-   
+    public weak var timer: Timer?
+    public var isPaused: Bool
     
-    init(name: String, time:Int) {
+    init(name: String, time:Int,isPaused: Bool) {
         
         self.name = name
         self.time = time
+        self.isPaused = isPaused
+        
         
     }
-    
-    
 }
