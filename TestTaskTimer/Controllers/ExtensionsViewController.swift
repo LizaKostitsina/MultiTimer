@@ -135,8 +135,7 @@ extension ViewController : UITableViewDelegate, UITableViewDataSource {
         }
         timersModel.sort { $0.time > $1.time }
         
-        print("button tag is \(sender.tag)")
-        self.tableView.reloadData()
+        self.tableView.reloadSections([1], with: .automatic)
         
     }
 }

@@ -58,6 +58,7 @@ class ViewController: UIViewController {
                 }
                 self?.tableView.reloadSections([1], with: .automatic)
                 
+                
                 timerModel.timer = nil
             }
             
